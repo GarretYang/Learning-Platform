@@ -2,57 +2,112 @@ import React, { Component } from "react";
 import { Route } from "react-router-dom";
 import "./App.css";
 import Search from "./searchBuilder/SearchBuilder";
-import Navbar from "./components/navbar";
 import Blog from "./components/Blog";
 import ContactUs from "./components/contactUs/contactUs";
-import ErrorBoundary from "./components/UI/ErrorHandler/ErrorHandler";
 import Publish from "./components/publish/Publish";
 import Footer from "./components/footer/footer";
 import About from "./components/about/about";
-
+import UserProfile from "./components/userProfile/userProfile";
+import ResetPasswordPage from "./components/resetpassword/ResetPasswordPage";
+import IdleTimer from "react-idle-timer";
+import { connect } from "react-redux";
+import NavBar from "./components/navbar";
+import Warning from "./components/UI/Warning/warning";
+import Confirmation from "./components/confirmation/confirmation";
 class App extends Component {
-  likeHandler = id => {
-    this.state.posts.filter(post => post.id === id);
-    this.setState({});
-  };
+  constructor(props) {
+    super(props);
+    this.idleTimer = null;
+    this.onIdle = this._onIdle.bind(this);
+  }
+
+  async componentDidMount() {
+    // await new Promise(resolve => setTimeout(resolve, 100000));
+    const ele = document.getElementById("ipl-progress-indicator");
+    if (ele) {
+      // fade out
+      ele.classList.add("available");
+      ele.outerHTML = "";
+    }
+  }
+  _onIdle(e) {
+    this.props.logout();
+  }
 
   render() {
     return (
-      <React.Fragment>
-        <Route
-          exact
-          path="/"
-          render={props => <h1>"localhost:3000/index" to view the page</h1>}
+      <div>
+        <NavBar />
+        <Warning />
+        <IdleTimer
+          ref={ref => {
+            this.idleTimer = ref;
+          }}
+          element={document}
+          onActive={this.onActive}
+          onIdle={this.onIdle}
+          onAction={this.onAction}
+          debounce={250}
+          timeout={1000 * 1800}
         />
-        <Route
-          path="/index"
-          render={props => (
-            <ErrorBoundary>
-              <Navbar />
-              <Search />
-              <About />
-              <Footer />
-            </ErrorBoundary>
-          )}
-        />
-        <Route
-          path="/designer"
-          component={() => (window.location = "https://zhuorandeng.com")}
-        />
-        <Route
-          path="/blog/:id"
-          exact
-          component={props => <Blog {...props} />}
-        />
-        <Route path="/contact" exact component={ContactUs} />
-        <Route
-          path="/publish"
-          exact
-          component={props => <Publish {...props} />}
-        />
-      </React.Fragment>
+
+        <React.Fragment>
+          <Route
+            path="/"
+            exact
+            render={props => (
+              <React.Fragment>
+                <Search />
+                <About />
+                <Footer />
+              </React.Fragment>
+            )}
+          />
+          <Route
+            path="/confirmation"
+            exact
+            component={props => <Confirmation {...props} />}
+          />
+          <Route
+            path="/designer"
+            exact
+            component={() => (window.location = "https://zhuorandeng.com")}
+          />
+          <Route
+            path="/blog/:id"
+            exact
+            component={props => <Blog {...props} />}
+          />
+          <Route
+            path="/contact"
+            exact
+            component={props => <ContactUs {...props} />}
+          />
+          <Route
+            path="/publish"
+            exact
+            component={props => <Publish {...props} />}
+          />
+          <Route
+            path="/userProfile"
+            exact
+            component={props => (
+              <React.Fragment>
+                <UserProfile {...props} />
+              </React.Fragment>
+            )}
+          />
+          <Route exact path="/reset-password" component={ResetPasswordPage} />
+        </React.Fragment>
+      </div>
     );
   }
 }
+const mapDispatchToProps = dispatch => {
+  return { logout: () => dispatch({ type: "LOGOUT" }) };
+};
 
-export default App;
+export default connect(
+  null,
+  mapDispatchToProps
+)(App);

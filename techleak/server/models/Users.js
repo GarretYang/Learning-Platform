@@ -39,8 +39,10 @@ const UsersSchema = new mongoose.Schema({
       }
     }
   },
-  likedPosts: { type: [String], unique: true },
-  savedPosts: { type: [String], unique: true },
+  avatar: { type: String },
+  likedPosts: { type: [String] },
+  savedPosts: { type: [String] },
+  myPosts: { type: [String] },
   tags: {
     type: [String],
     enum: availableTags,
@@ -52,7 +54,11 @@ const UsersSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
     required: true
-  }
+  },
+  confirmation: String,
+  passwordReset: { type: String, select: false },
+  draft: String,
+  bio: { type: String, default: "Your Biography" }
 });
 
 UsersSchema.methods.setPassword = function(password) {
@@ -76,8 +82,8 @@ UsersSchema.methods.generateJWT = function() {
       username: this.email,
       password: this.password
     },
-    "nowaytocheatonthisdouchybag",
-    { expiresIn: "1h" }
+    process.env.JWT_SECRET,
+    { expiresIn: "2h" }
   );
 };
 
@@ -85,7 +91,8 @@ UsersSchema.methods.userView = function() {
   return {
     email: this.email,
     username: this.username,
-    likeTags: this.likeTags
+    likeTags: this.likeTags,
+    avatar: this.avatar
   };
 };
 
@@ -95,7 +102,10 @@ UsersSchema.methods.toAuthJSON = function() {
     email: this.email,
     token: this.generateJWT(),
     id: this._id,
-    likedPosts: this.likedPosts
+    likedPosts: this.likedPosts,
+    myPosts: this.myPosts,
+    avatar: this.avatar,
+    bio: this.bio
   };
 };
 

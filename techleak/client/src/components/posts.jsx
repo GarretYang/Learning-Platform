@@ -17,9 +17,10 @@ const Posts = props => {
             margin: "auto 10% auto 10%"
           }}
         >
-          {posts.slice(index * 3, index * 3 + 3).map((post, position) => (
-            <Post key={position + rows} post={post} />
-          ))}
+          {posts.slice(index * 3, index * 3 + 3).map((post, position) => {
+            // if (!post.tags) return false
+            return <Post key={position + rows} post={post} />;
+          })}
         </div>
       ))}
     </React.Fragment>

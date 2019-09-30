@@ -8,7 +8,7 @@ const client = algoliasearch(
   }
 );
 
-const index = client.initIndex("Test");
+const index = client.initIndex("posts");
 const algoliaSchema = [
   "title",
   "tags",

@@ -7,13 +7,13 @@ const fs = require("fs");
 require("./config/passport");
 require("dotenv").config();
 
-const DBPORT = process.env.DBPORT || 27017;
-const APIPORT = process.env.APIPORT || 3000;
-
+const PORT = process.env.PORT || 3000;
+const MONGODBURI =
+  process.env.MONGODB_URI || "mongodb://localhost:27017/project";
 mongoose.set("useFindAndModify", false);
 mongoose.set("useCreateIndex", true);
 mongoose
-  .connect("mongodb://localhost:" + DBPORT + "/project", {
+  .connect(MONGODBURI, {
     useNewUrlParser: true
   })
   .then(() => console.log("connected"))
@@ -54,6 +54,6 @@ if (!fs.existsSync(filesDir)) {
 }
 
 //Listening port
-app.listen(APIPORT, () => {
-  console.log(`Listening on ${APIPORT}`);
+app.listen(PORT, () => {
+  console.log(`Listening on ${PORT}`);
 });

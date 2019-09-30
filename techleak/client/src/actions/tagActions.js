@@ -12,7 +12,7 @@ export function closeDisplay() {
   }
 }
 
-export function addTag(tag) {
+export function selectTag(tag) {
   return {
     type: "HANDLE_SELECT",
     payload: tag
@@ -23,5 +23,12 @@ export function removeTag(tag) {
   return {
     type: "HANDLE_REMOVE",
     payload: tag
+  }
+}
+
+export function handlePosted() {
+  return {
+    type: "HANDLE_POSTED",
+    payload: null
   }
 }
